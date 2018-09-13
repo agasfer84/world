@@ -6,21 +6,23 @@
     <title>
         World
     </title>
-    <link href="styles/style.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
     <script src="js/rest.js"></script>
     <script src="js/main.js"></script>
 </head>
 <body>
 
-<span id="usercountry_territory"></span>
-<span id="usercountry_population"></span>
-<span id="usercountry_budget"></span>
-<span id="usercountry_agro_farm"></span>
-<span id="usercountry_factory"></span>
-<span id="usercountry_energy_station"></span>
-<span id="usercountry_metal_plant"></span>
-<span id="usercountry_oil_plant"></span>
-<span id="usercountry_building_plant"></span>
+<div id="top_panel">
+    <span id="usercountry_territory" title="Площадь"></span>
+    <span id="usercountry_population" title="Население"></span>
+    <span id="usercountry_budget" title="Бюджет"></span>
+    <span id="usercountry_agro_farm" title="Агрофермы"></span>
+    <span id="usercountry_factory" title="Фабрики"></span>
+    <span id="usercountry_energy_station" title="Электростанции"></span>
+    <span id="usercountry_metal_plant" title="Металлургические заводы"></span>
+    <span id="usercountry_oil_plant" title="НПЗ"></span>
+    <span id="usercountry_building_plant" title="Строительные комбинаты"></span>
+</div>
 
 </body>
 </html>

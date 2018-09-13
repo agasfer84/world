@@ -5,7 +5,7 @@ var url = "Controller.php";
 function getUserCountryInfo() {
     var id = 1;
     var action = "actionCountryInfo";
-    var params = [];
+    var params = JSON.stringify({});
 
     get(url, action, id, params).then(promiseRequest).then(
         function(data){
@@ -15,15 +15,14 @@ function getUserCountryInfo() {
                 if (!data.hasOwnProperty(key)) continue;
 
                 var element_name = "usercountry_" + key;
-                setElementContent (element_name, data[key]);
+                var value = data[key];
+                setElementContent (element_name, value);
             }
 
         }
     );
 
-
 }
-
 
 function promiseRequest(data) {
     console.log(data);
@@ -39,5 +38,10 @@ function setElementContent (element_name, value) {
     }
 }
 
+
+// var body = JSON.stringify({
+//     name: "Россия"
+// });
+// post(url, action, body).then(promiseRequest);
 
 getUserCountryInfo();
