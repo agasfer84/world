@@ -1,6 +1,7 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT']."/Countries.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/Market.php";
 
 $_action = $_REQUEST["action"];
 $_id = $_REQUEST["id"];
@@ -16,6 +17,13 @@ if ($_action == "actionCountryInfo") {
         $result = false;
     } else {
         if( strtoupper($_SERVER['REQUEST_METHOD']) == "GET" ) {
+
+            /*world*/
+            $country_list = $Countries->getCountryList();
+            $Countries->setAllCountriesIncome($country_list);
+            $Countries->setAllCountriesReserves($country_list);
+            /*end world*/
+
             $country = $Countries->getCountryById($_id);
             $consumption = $Countries->getCountryConsumption($country);
             $production = $Countries->getCountryProduction($country);
@@ -28,6 +36,12 @@ if ($_action == "actionCountryInfo") {
             $result = array_merge($country, $consumption, $production, $balance);
         }
     }
+}
+
+
+if ($_action == "actionMarketPositions") {
+    $balances = $Countries->balancesToMarket();
+    $result  = $Market->setMarketPositions($balances);
 }
 
 $response = $result;

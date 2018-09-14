@@ -38,6 +38,13 @@ function setElementContent (element_name, value) {
     }
 }
 
+function getMarketPositions() {
+    var id = 1;
+    var action = "actionMarketPositions";
+    var params = JSON.stringify({});
+    get(url, action, id, params).then(promiseRequest)
+}
+
 
 // var body = JSON.stringify({
 //     name: "Россия"
@@ -45,3 +52,4 @@ function setElementContent (element_name, value) {
 // post(url, action, body).then(promiseRequest);
 
 getUserCountryInfo();
+getMarketPositions();
