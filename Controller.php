@@ -44,6 +44,12 @@ if ($_action == "actionMarketPositions") {
     $result  = $Market->setMarketPositions($balances);
 }
 
+if ($_action == "actionMarketDeals") {
+    $positions  = json_decode($_body, true);
+    $result  = $Market->setMarketDeals($positions["positions"]);
+    //$result = $positions["positions"];
+}
+
 $response = $result;
 
 header("Content-type: application/json; charset=utf-8");

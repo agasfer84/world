@@ -7,6 +7,7 @@ class Countries
     const AGRO_FARM_PRODUCTION = 5000;
     const POPULATION_FARM_CONSUMPTION = 1;
     const AGRO_CYCLE = 50;
+    const MONTH_CYCLE = 4;
 
     public function __construct()
     {
@@ -47,15 +48,9 @@ class Countries
         return $result;
     }
 
-    public function populationIncomeByCountry($id) {
-        $incomes = ["1"=>500, "2"=>5000];
-
-        return $incomes[$id];
-    }
-
     public function calculateCountryIncome($id) {
         $country = $this->getCountryById($id);
-        $income = ($country["population"] * $this->populationIncomeByCountry($id) * ($country["income_tax"] / 100)) / 4;
+        $income = ($country["population"] * $country["income"] * ($country["income_tax"] / 100)) / self::MONTH_CYCLE;
 
         return $income;
     }

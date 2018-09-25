@@ -42,7 +42,21 @@ function getMarketPositions() {
     var id = 1;
     var action = "actionMarketPositions";
     var params = JSON.stringify({});
-    get(url, action, id, params).then(promiseRequest)
+    get(url, action, id, params).then(promiseRequest).then(
+        function(data){
+            getMarketDeals(data);
+        }
+    );
+}
+
+function getMarketDeals(positions) {
+    // var positions_obj = arr.reduce(function(acc, cur, i) {
+    //     acc[i] = cur;
+    //     return acc;
+    // }, {});
+    var action = "actionMarketDeals";
+    var body = JSON.stringify({"positions" : positions});
+    post(url, action, body).then(promiseRequest);
 }
 
 

@@ -24,5 +24,11 @@
     <span id="usercountry_building_plant" title="Строительные комбинаты"></span>
 </div>
 
+<div id="market">
+    <h2>Market</h2>
+
+
+</div>
+
 </body>
 </html>
