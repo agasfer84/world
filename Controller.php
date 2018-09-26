@@ -38,6 +38,14 @@ if ($_action == "actionCountryInfo") {
     }
 }
 
+if ($_action == "actionWorldProduction") {
+    $result  = $Countries->getWorldProduction();
+}
+
+if ($_action == "actionMarketPrices") {
+    $world_production_groupped = $Countries->getWorldProduction();
+    $result  = $Market->setPrices($world_production_groupped);
+}
 
 if ($_action == "actionMarketPositions") {
     $balances = $Countries->balancesToMarket();
@@ -47,7 +55,11 @@ if ($_action == "actionMarketPositions") {
 if ($_action == "actionMarketDeals") {
     $positions  = json_decode($_body, true);
     $result  = $Market->setMarketDeals($positions["positions"]);
-    //$result = $positions["positions"];
+}
+
+if ($_action == "actionMarketWorldPositions") {
+    $positions  = json_decode($_body, true);
+    $result  = $Market->getWorldPositions($positions["positions"]);
 }
 
 $response = $result;

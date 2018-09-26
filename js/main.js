@@ -1,9 +1,9 @@
 "use strict";
 
 var url = "Controller.php";
+var id = 1;
 
 function getUserCountryInfo() {
-    var id = 1;
     var action = "actionCountryInfo";
     var params = JSON.stringify({});
 
@@ -39,24 +39,38 @@ function setElementContent (element_name, value) {
 }
 
 function getMarketPositions() {
-    var id = 1;
     var action = "actionMarketPositions";
     var params = JSON.stringify({});
     get(url, action, id, params).then(promiseRequest).then(
         function(data){
             getMarketDeals(data);
+            getMarketWorldPositions(data);
         }
     );
 }
 
 function getMarketDeals(positions) {
-    // var positions_obj = arr.reduce(function(acc, cur, i) {
-    //     acc[i] = cur;
-    //     return acc;
-    // }, {});
     var action = "actionMarketDeals";
     var body = JSON.stringify({"positions" : positions});
     post(url, action, body).then(promiseRequest);
+}
+
+function getMarketWorldPositions(positions) {
+    var action = "actionMarketWorldPositions";
+    var body = JSON.stringify({"positions" : positions});
+    post(url, action, body).then(promiseRequest);
+}
+
+function getWorldProduction() {
+    var action = "actionWorldProduction";
+    var params = JSON.stringify({});
+    get(url, action, id, params).then(promiseRequest);
+}
+
+function getMarketPrices() {
+    var action = "actionMarketPrices";
+    var params = JSON.stringify({});
+    get(url, action, id, params).then(promiseRequest);
 }
 
 
@@ -67,3 +81,5 @@ function getMarketDeals(positions) {
 
 getUserCountryInfo();
 getMarketPositions();
+getWorldProduction();
+getMarketPrices();
