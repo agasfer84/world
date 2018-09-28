@@ -36,16 +36,18 @@ class Countries
     }
 
     public function getCountryConsumption($country) {
-        $food_consumption = $country["population"] * self::POPULATION_FARM_CONSUMPTION;
-        $goods_consumption = $country["population"] * self::POPULATION_GOODS_CONSUMPTION;
-        $energy_consumption = $country["population"] * self::POPULATION_ENERGY_CONSUMPTION;
-        $oil_consumption = $country["population"] * self::POPULATION_OIL_CONSUMPTION;
+        $food_consumption = $country["population"] * $country["level"] * self::POPULATION_FARM_CONSUMPTION;
+        $goods_consumption = $country["population"] * $country["level"] * self::POPULATION_GOODS_CONSUMPTION;
+        $energy_consumption = ($country["population"] * $country["level"] * self::POPULATION_ENERGY_CONSUMPTION);
+        $metal_consumption = $country["factory"] * self::FACTORY_PRODUCTION;
+        $oil_consumption = $country["population"] * $country["level"] * self::POPULATION_OIL_CONSUMPTION;
         $building_materials_consumption = 0;
 
         $result = [
             "food_consumption" => $food_consumption,
             "goods_consumption" => $goods_consumption,
             "energy_consumption" => $energy_consumption,
+            "metal_consumption" => $metal_consumption,
             "oil_consumption" => $oil_consumption,
             "building_materials_consumption" => $building_materials_consumption,
         ];
@@ -75,15 +77,17 @@ class Countries
         $food_balance = $production["food_production"] - $consumption["food_consumption"];
         $goods_balance = $production["goods_production"] - $consumption["goods_consumption"];
         $energy_balance = $production["energy_production"] - $consumption["energy_consumption"];
+        $metal_balance = $production["metal_production"] - $consumption["metal_consumption"];
         $oil_balance = $production["oil_production"] - $consumption["oil_consumption"];
         $building_materials_balance = $production["building_materials_production"] - $consumption["building_materials_consumption"];
 
         $result = [
-            "food_balance" => $food_balance,
-            "goods_balance" => $goods_balance,
-            "energy_balance" => $energy_balance,
-            "oil_balance" => $oil_balance,
-            "building_materials_balance" => $building_materials_balance,
+            "food_balance" => ($food_balance) ? $food_balance : -1,
+            "goods_balance" => ($goods_balance) ? $goods_balance : -1,
+            "energy_balance" => ($energy_balance) ? $energy_balance : -1,
+            "metal_balance" => ($metal_balance) ? $metal_balance : -1,
+            "oil_balance" => ($oil_balance) ? $oil_balance : -1,
+            "building_materials_balance" => ($building_materials_balance) ? $building_materials_balance : -1,
 
         ];
 
@@ -92,7 +96,7 @@ class Countries
 
     public function calculateCountryIncome($id) {
         $country = $this->getCountryById($id);
-        $income = ($country["population"] * $country["income"] * ($country["income_tax"] / 100)) / self::MONTH_CYCLE;
+        $income = ($country["population"] * $country["income"] * $country["level"] * ($country["income_tax"] / 100)) / self::MONTH_CYCLE;
 
         return $income;
     }

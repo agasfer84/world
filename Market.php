@@ -35,20 +35,33 @@ class Market
         $food_price = round(($world_production_groupped["budget"]/abs($world_production_groupped["food_balance"]))* $world_production_groupped["k_food_deficite"]);
         $goods_price = round(($world_production_groupped["budget"]/abs($world_production_groupped["goods_balance"]))* $world_production_groupped["k_goods_deficite"]);
         $energy_price = round(($world_production_groupped["budget"]/abs($world_production_groupped["energy_balance"]))* $world_production_groupped["k_energy_deficite"]);
+        $metal_price = round(($world_production_groupped["budget"]/abs($world_production_groupped["metal_balance"]))* $world_production_groupped["k_metal_deficite"]);
+        $oil_price = round(($world_production_groupped["budget"]/abs($world_production_groupped["oil_balance"]))* $world_production_groupped["k_oil_deficite"]);
+        $building_materials_price = round(($world_production_groupped["budget"]/abs($world_production_groupped["building_materials_balance"]))* $world_production_groupped["k_building_materials_deficite"]);
 
-        if($world_production_groupped["food_balance"]>0){
+        if($world_production_groupped["food_balance"]>0 || !$food_price){
             $food_price = 1;
         }
 
-        if($world_production_groupped["goods_balance"]>0){
+        if($world_production_groupped["goods_balance"]>0 || !$goods_price){
             $goods_price = 1;
         }
 
-        if($world_production_groupped["energy_balance"]>0){
+        if($world_production_groupped["energy_balance"]>0 || !$energy_price){
             $energy_price = 1;
         }
 
-        $prices = ["food" => $food_price, "goods" => $goods_price, "energy" => $energy_price];
+        if($world_production_groupped["metal_balance"]>0 || !$metal_price){
+            $metal_price = 1;
+        }
+        if($world_production_groupped["oil_balance"]>0 || !$oil_price){
+            $oil_price = 1;
+        }
+        if($world_production_groupped["building_materials_balance"]>0 || !$building_materials_price){
+            $building_materials_price = 1;
+        }
+
+        $prices = ["food" => $food_price, "goods" => $goods_price, "energy" => $energy_price, 'metal' =>$metal_price, 'oil' => $oil_price, 'building_materials' => $building_materials_price];
 
         return $prices;
     }
