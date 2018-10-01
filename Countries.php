@@ -4,16 +4,23 @@ require_once $_SERVER['DOCUMENT_ROOT']."/dbconnect.php";
 
 class Countries
 {
-    const AGRO_FARM_PRODUCTION = 5000;
+    const AGRO_FARM_PRODUCTION = 20000;
     const FACTORY_PRODUCTION = 10000;
-    const ENERGY_STATION_PRODUCTION = 50000000;
-    const OIL_PLANT_PRODUCTION = 1;
+    const ENERGY_STATION_PRODUCTION = 5000000;
+    const OIL_PLANT_PRODUCTION = 150000000;
+    const METAL_PLANT_PRODUCTION = 2000000;
     const BUILDING_PLANT_PRODUCTION = 1;
+
+    const OIL_TO_ENERGY = 0.1;
+    const ENERGY_TO_METAL = 0.4;
+    const ENERGY_TO_GOOD = 10;
+    const METAL_TO_GOOD = 0.1;
+    const BARREL = 159;
 
     const POPULATION_FARM_CONSUMPTION = 1;
     const POPULATION_GOODS_CONSUMPTION = 1;
-    const POPULATION_ENERGY_CONSUMPTION = 25;
-    const POPULATION_OIL_CONSUMPTION = 1;
+    const POPULATION_ENERGY_CONSUMPTION = 6;
+    const POPULATION_OIL_CONSUMPTION = 14;
     const AGRO_CYCLE = 50;
     const MONTH_CYCLE = 4;
 
@@ -38,9 +45,9 @@ class Countries
     public function getCountryConsumption($country) {
         $food_consumption = $country["population"] * $country["level"] * self::POPULATION_FARM_CONSUMPTION;
         $goods_consumption = $country["population"] * $country["level"] * self::POPULATION_GOODS_CONSUMPTION;
-        $energy_consumption = ($country["population"] * $country["level"] * self::POPULATION_ENERGY_CONSUMPTION);
-        $metal_consumption = $country["factory"] * self::FACTORY_PRODUCTION;
-        $oil_consumption = $country["population"] * $country["level"] * self::POPULATION_OIL_CONSUMPTION;
+        $metal_consumption = round($country["factory"] * self::FACTORY_PRODUCTION * self::METAL_TO_GOOD);
+        $energy_consumption = round($country["population"] * $country["level"] * self::POPULATION_ENERGY_CONSUMPTION + $metal_consumption * self::ENERGY_TO_METAL + $country["factory"] * self::FACTORY_PRODUCTION * self::ENERGY_TO_GOOD);
+        $oil_consumption = round($country["population"] * $country["level"] * self::POPULATION_OIL_CONSUMPTION + $country["energy_station"] * self::ENERGY_STATION_PRODUCTION * self::OIL_TO_ENERGY);
         $building_materials_consumption = 0;
 
         $result = [
@@ -58,6 +65,7 @@ class Countries
     public function getCountryProduction($country) {
         $food_production = $country["agro_farm"] * self::AGRO_FARM_PRODUCTION;
         $goods_production = $country["factory"] * self::FACTORY_PRODUCTION;
+        $metal_production = $country["metal_plant"] * self::METAL_PLANT_PRODUCTION;
         $energy_production = $country["energy_station"] * self::ENERGY_STATION_PRODUCTION;
         $oil_production = $country["oil_plant"] * self::OIL_PLANT_PRODUCTION;
         $building_materials_production = $country["building_plant"] * self::BUILDING_PLANT_PRODUCTION;
@@ -65,6 +73,7 @@ class Countries
         $result = [
             "food_production" => $food_production,
             "goods_production" => $goods_production,
+            "metal_production" => $metal_production,
             "energy_production" => $energy_production,
             "oil_production" => $oil_production,
             "building_materials_production" => $building_materials_production,
