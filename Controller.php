@@ -53,8 +53,13 @@ if ($_action == "actionMarketPositions") {
 }
 
 if ($_action == "actionMarketDeals") {
-    $positions  = json_decode($_body, true);
-    $result  = $Market->setMarketDeals($positions["positions"]);
+    $balances = $Countries->balancesToMarket();
+    $positions  = $Market->setMarketPositions($balances);
+    $world_production_groupped = $Countries->getWorldProduction();
+    $prices = $Market->setPrices($world_production_groupped);
+    $deals = $Market->setMarketDeals($positions, $prices);
+    $Countries->acceptMarketDeals($deals);
+    $result  = $deals;
 }
 
 if ($_action == "actionMarketWorldPositions") {

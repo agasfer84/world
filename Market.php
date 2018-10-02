@@ -13,7 +13,7 @@ class Market
 
             foreach ($balance as $key => $value) {
 
-                if ($key == "id" || $key == "name" || $key =='energy_balance' || $key =='building_materials_balance' || $key =='production' || $key =='consumption') continue;
+                if ($key == "id" || $key == "name" || $key =='budget' || $key =='energy_balance' || $key =='building_materials_balance' || $key =='production' || $key =='consumption') continue;
 
                 if($value == 0) continue;
 
@@ -23,7 +23,7 @@ class Market
                     $position = "sale";
                 }
 
-                $positions[] = ["country_id" => $balance["id"], "country_name" => $balance["name"], "product_type" => $key, "product_value" => $value, "position_type" => $position];
+                $positions[] = ["country_id" => $balance["id"], "country_name" => $balance["name"], "country_budget" => $balance["budget"], "product_type" => $key, "product_value" => $value, "position_type" => $position];
             }
 
         }
@@ -66,19 +66,39 @@ class Market
         return $prices;
     }
 
-    public function setMarketDeals($positions){
+    public function setMarketDeals($positions, $prices){
+
+        $products_keys = ["goods_balance" => "goods", "food_balance" => "food", "energy_balance" => "energy", "metal_balance" => "metal", "oil_balance" => "oil", "building_materials_balance" => "building_materials"];
+
+
         $deals = [];
 
         foreach ($positions as $position) {
 
             if ($position["position_type"] == "buy" && $search_position = $this->searchPosition($positions, $position)) {
+
+                $product_value = (abs($search_position["product_value"])>= $position["product_value"]) ? $search_position["product_value"] : abs($position["product_value"]);
+                $product_price = $prices[$products_keys[$position["product_type"]]];
+                $value_cost = $product_value * $product_price;
+
+                if ($value_cost >= $position["country_budget"]) {
+                    $product_value = floor($position["country_budget"] / $product_price);
+                    $value_cost = $product_value * $product_price;
+                }
+
+                $status = ($value_cost <= $position["country_budget"]) ? "accept" : "reject";
+
                 $deals[] = [
                     "buyer_id" => $position["country_id"],
                     "buyer_name" => $position["country_name"],
                     "product_type" => $position["product_type"],
-                    "product_value" => (abs($search_position["product_value"])>= $position["product_value"]) ? $search_position["product_value"] : abs($position["product_value"]),
+                    "product_value" => $product_value,
+                    "product_price" => $product_price,
+                    "value_cost" => $value_cost,
                     "saler_id" => $search_position["country_id"],
                     "saler_name" => $search_position["country_name"],
+                    "buyer_budget" => $position["country_budget"],
+                    "status" => $status
                 ];
             }
         }

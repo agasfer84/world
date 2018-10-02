@@ -82,6 +82,10 @@ class Countries
         return $result;
     }
 
+    public function getCountryBudget($country) {
+        return $country["budget"];
+    }
+
     public function getCountryProductBalance($production, $consumption) {
         $food_balance = $production["food_production"] - $consumption["food_consumption"];
         $goods_balance = $production["goods_production"] - $consumption["goods_consumption"];
@@ -213,10 +217,30 @@ class Countries
         foreach ($country_list as $country) {
             $consumption = $this->getCountryConsumption($country);
             $production = $this->getCountryProduction($country);
-            $balances[] = array_merge(["id" => $country["id"]], ["name" => $country["name"]], ["production" => $production], ["consumption" => $consumption],  $this->getCountryProductBalance($production, $consumption));
+
+            $balances[] = array_merge(["id" => $country["id"]], ["name" => $country["name"]],["budget" => (int)$country["budget"]], ["production" => $production], ["consumption" => $consumption],  $this->getCountryProductBalance($production, $consumption));
         }
 
         return $balances;
+    }
+
+    public function acceptMarketDeals($deals) {
+
+        $connection = $this->db;
+
+        $reserves_keys = ["goods_balance" => "goods_reserv", "food_balance" => "food_reserv", "metal_balance" => "metal_reserv", "oil_balance" => "oil_reserv", "building_materials_balance" => "building_materials_reserv"];
+
+        foreach ($deals AS $deal) {
+
+            if ($deal["status"] != "accept") continue;
+
+            $query = "UPDATE countries SET budget=budget-:product_cost,".$reserves_keys[$deal["product_type"]]."=".$reserves_keys[$deal["product_type"]]."+:product_value WHERE id = :buyer_id;"."UPDATE countries SET budget=budget+:product_cost,".$reserves_keys[$deal["product_type"]]."=".$reserves_keys[$deal["product_type"]]."-:product_value WHERE id = :saler_id;";
+
+            $params = ["buyer_id" => $deal["buyer_id"], "saler_id" => $deal["saler_id"], "product_cost" => $deal["value_cost"], "product_value" => $deal["product_value"]];
+            $stmt = $connection->prepare($query);
+            $stmt->execute($params);
+
+        }
     }
 
 

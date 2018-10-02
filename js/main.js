@@ -43,16 +43,15 @@ function getMarketPositions() {
     var params = JSON.stringify({});
     get(url, action, id, params).then(promiseRequest).then(
         function(data){
-            getMarketDeals(data);
             getMarketWorldPositions(data);
         }
     );
 }
 
-function getMarketDeals(positions) {
+function getMarketDeals() {
     var action = "actionMarketDeals";
-    var body = JSON.stringify({"positions" : positions});
-    post(url, action, body).then(promiseRequest);
+    var params = JSON.stringify({});
+    get(url, action, id, params).then(promiseRequest);
 }
 
 function getMarketWorldPositions(positions) {
@@ -79,7 +78,9 @@ function getMarketPrices() {
 // });
 // post(url, action, body).then(promiseRequest);
 
-getUserCountryInfo();
+
 getMarketPositions();
 getWorldProduction();
 getMarketPrices();
+getMarketDeals();
+getUserCountryInfo();
