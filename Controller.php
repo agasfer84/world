@@ -27,7 +27,7 @@ if ($_action == "actionCountryInfo") {
             $country = $Countries->getCountryById($_id);
             $consumption = $Countries->getCountryConsumption($country);
             $production = $Countries->getCountryProduction($country);
-            $balance = $Countries->getCountryProductBalance($production, $consumption);
+            $balance = $Countries->getCountryProductBalance($production, $consumption, $country);
 
             if (!$country || !$consumption || !$production || !$balance) {
                 return false;

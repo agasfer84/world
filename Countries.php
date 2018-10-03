@@ -82,11 +82,23 @@ class Countries
         return $result;
     }
 
+    public function getCountryReserves($country) {
+        $result = [
+            "goods_reserv" => $country["goods_reserv"],
+            "food_reserv" => $country["food_reserv"],
+            "metal_reserv" => $country["metal_reserv"],
+            "oil_reserv" => $country["oil_reserv"],
+            "building_materials_reserv" => $country["building_materials_reserv"],
+        ];
+
+        return $result;
+    }
+
     public function getCountryBudget($country) {
         return $country["budget"];
     }
 
-    public function getCountryProductBalance($production, $consumption) {
+    public function getCountryProductBalance($production, $consumption, $country) {
         $food_balance = $production["food_production"] - $consumption["food_consumption"];
         $goods_balance = $production["goods_production"] - $consumption["goods_consumption"];
         $energy_balance = $production["energy_production"] - $consumption["energy_consumption"];
@@ -157,7 +169,7 @@ class Countries
         foreach ($country_list as $country) {
             $consumption = $this->getCountryConsumption($country);
             $production = $this->getCountryProduction($country);
-            $country_balance = $this->getCountryProductBalance($production, $consumption);
+            $country_balance = $this->getCountryProductBalance($production, $consumption, $country);
 
             $this->setCountryReserves($country["id"], $country_balance);
         }
@@ -188,7 +200,7 @@ class Countries
         foreach ($country_list as $country) {
             $consumption = $this->getCountryConsumption($country);
             $production = $this->getCountryProduction($country);
-            $balance = $this->getCountryProductBalance($production, $consumption);
+            $balance = $this->getCountryProductBalance($production, $consumption, $country);
             $countries_production[] = array_merge($consumption, $production, $balance, ["budget" => $country["budget"]]);
         }
 
@@ -217,8 +229,9 @@ class Countries
         foreach ($country_list as $country) {
             $consumption = $this->getCountryConsumption($country);
             $production = $this->getCountryProduction($country);
+            $reserves = $this->getCountryReserves($country);
 
-            $balances[] = array_merge(["id" => $country["id"]], ["name" => $country["name"]],["budget" => (int)$country["budget"]], ["production" => $production], ["consumption" => $consumption],  $this->getCountryProductBalance($production, $consumption));
+            $balances[] = array_merge(["id" => $country["id"]], ["name" => $country["name"]],["budget" => (int)$country["budget"]], ["production" => $production], ["consumption" => $consumption], ["reserves" => $reserves],  $this->getCountryProductBalance($production, $consumption, $country));
         }
 
         return $balances;
