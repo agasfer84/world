@@ -6,7 +6,7 @@ class Countries
 {
     const AGRO_FARM_PRODUCTION = 20000;
     const FACTORY_PRODUCTION = 10000;
-    const ENERGY_STATION_PRODUCTION = 5000000;
+    const ENERGY_STATION_PRODUCTION = 20000000;
     const OIL_PLANT_PRODUCTION = 150000000;
     const METAL_PLANT_PRODUCTION = 2000000;
     const BUILDING_PLANT_PRODUCTION = 1;
@@ -64,10 +64,21 @@ class Countries
 
     public function getCountryProduction($country) {
         $food_production = $country["agro_farm"] * self::AGRO_FARM_PRODUCTION;
-        $goods_production = $country["factory"] * self::FACTORY_PRODUCTION;
-        $metal_production = $country["metal_plant"] * self::METAL_PLANT_PRODUCTION;
-        $energy_production = $country["energy_station"] * self::ENERGY_STATION_PRODUCTION;
         $oil_production = $country["oil_plant"] * self::OIL_PLANT_PRODUCTION;
+
+        $oil_energy_need = round($country["energy_station"] * self::ENERGY_STATION_PRODUCTION * self::OIL_TO_ENERGY);
+        $k_oil = $oil_production / $oil_energy_need;
+        $k_oil = ($k_oil > 1) ? 1: $k_oil;
+
+        $energy_production = $country["energy_station"] * self::ENERGY_STATION_PRODUCTION * $k_oil;
+
+        $energy_product_need = round($country["metal_plant"] * self::METAL_PLANT_PRODUCTION * self::ENERGY_TO_METAL + $country["factory"] * self::FACTORY_PRODUCTION * self::ENERGY_TO_GOOD);
+        $k_energy = $energy_production / $energy_product_need;
+        $k_energy = ($k_energy > 1) ? 1: $k_energy;
+
+        $goods_production = floor($country["factory"] * self::FACTORY_PRODUCTION *  $k_energy );
+        $metal_production = floor($country["metal_plant"] * self::METAL_PLANT_PRODUCTION * $k_energy);
+
         $building_materials_production = $country["building_plant"] * self::BUILDING_PLANT_PRODUCTION;
 
         $result = [
@@ -138,18 +149,24 @@ class Countries
     public function setCountryReserves($id, $country_balance) {
         $connection = $this->db;
 
-        $food_value = $country_balance["food_balance"];
-        $goods_value = $country_balance["goods_balance"];
-        $metal_value = $country_balance["metal_balance"];
-        $oil_value = $country_balance["oil_balance"];
-        $building_materials_value = $country_balance["building_materials_balance"];
+        $query = "SELECT * FROM countries WHERE id = :id";
+        $params = ["id" => $id];
+        $stmt = $connection->prepare($query);
+        $stmt->execute($params);
+        $country =  $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $food_value = (($country_balance["food_balance"] + (int)$country["food_balance"]) > 0) ? $country_balance["food_balance"] + (int)$country["food_balance"] : 0;
+        $goods_value = (($country_balance["goods_balance"] + (int)$country["goods_balance"]) > 0) ? $country_balance["goods_balance"] + (int)$country["goods_balance"] : 0;
+        $metal_value = (($country_balance["metal_balance"] + (int)$country["metal_balance"]) > 0) ? $country_balance["metal_balance"] + (int)$country["metal_balance"] : 0;
+        $oil_value = (($country_balance["oil_balance"] + (int)$country["oil_balance"]) > 0) ? $country_balance["oil_balance"]+ (int)$country["oil_balance"] : 0;
+        $building_materials_value = (($country_balance["building_materials_balance"] + (int)$country["building_materials_balance"]) > 0) ? $country_balance["building_materials_balance"] + (int)$country["building_materials_balance"] : 0;
 
         $query = "UPDATE countries 
-        SET food_reserv=food_reserv+:food_value, 
-        goods_reserv=goods_reserv+:goods_value, 
-        metal_reserv=metal_reserv+:metal_value, 
-        oil_reserv=oil_reserv+:oil_value, 
-        building_materials_reserv=building_materials_reserv+:building_materials_value
+        SET food_reserv=:food_value, 
+        goods_reserv=:goods_value, 
+        metal_reserv=:metal_value, 
+        oil_reserv=:oil_value, 
+        building_materials_reserv=:building_materials_value
         WHERE id = :id";
 
         $params = ["id" => $id,

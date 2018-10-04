@@ -17,13 +17,6 @@ if ($_action == "actionCountryInfo") {
         $result = false;
     } else {
         if( strtoupper($_SERVER['REQUEST_METHOD']) == "GET" ) {
-
-            /*world*/
-            $country_list = $Countries->getCountryList();
-            $Countries->setAllCountriesIncome($country_list);
-            $Countries->setAllCountriesReserves($country_list);
-            /*end world*/
-
             $country = $Countries->getCountryById($_id);
             $consumption = $Countries->getCountryConsumption($country);
             $production = $Countries->getCountryProduction($country);
@@ -39,6 +32,10 @@ if ($_action == "actionCountryInfo") {
 }
 
 if ($_action == "actionWorldProduction") {
+    $country_list = $Countries->getCountryList();
+    $Countries->setAllCountriesIncome($country_list);
+    $Countries->setAllCountriesReserves($country_list);
+
     $result  = $Countries->getWorldProduction();
 }
 

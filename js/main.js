@@ -79,8 +79,9 @@ function getMarketPrices() {
 // post(url, action, body).then(promiseRequest);
 
 
-getMarketPositions();
+
 getWorldProduction();
+getMarketPositions();
 getMarketPrices();
 getMarketDeals();
 getUserCountryInfo();

@@ -99,7 +99,7 @@ class Market
                     $status = (($value_cost <= $position["country_budget"]) && ($position["country_budget"] > 0)) ? "accept" : "reject";
 
                     $deals[] = [
-                        "buyer_id" => $position["country_id"],
+                        "status" => $status,
                         "buyer_name" => $position["country_name"],
                         "product_type" => $position["product_type"],
                         "product_value" => abs($product_value),
@@ -108,7 +108,8 @@ class Market
                         "saler_id" => $search_position["country_id"],
                         "saler_name" => $search_position["country_name"],
                         "buyer_budget" => $position["country_budget"],
-                        "status" => $status
+                        "buyer_id" => $position["country_id"]
+
                     ];
                 }
 
