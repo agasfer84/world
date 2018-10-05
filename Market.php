@@ -65,6 +65,18 @@ class Market
             $building_materials_price = 1;
         }
 
+        $energy_minimal_price = round(0.1 * $oil_price);
+
+        $energy_price = ($energy_price > $energy_minimal_price) ? $energy_price : $energy_minimal_price;
+
+        $metal_minimal_price = round(0.4 * $energy_price);
+
+        $metal_price = ($metal_price > $metal_minimal_price) ? $metal_price : $metal_minimal_price;
+
+        $goods_minimal_price = round(0.1 * $metal_price + 10 * $energy_price);
+
+        $goods_price = ($goods_price > $goods_minimal_price) ? $goods_price : $goods_minimal_price;
+
         $prices = ["food" => $food_price, "goods" => $goods_price, "energy" => $energy_price, 'metal' =>$metal_price, 'oil' => $oil_price, 'building_materials' => $building_materials_price];
 
         return $prices;
